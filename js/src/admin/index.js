@@ -24,27 +24,26 @@ app.initializers.add('linkrobins-html-widget', () => {
       placeholder: 'fas fa-info-circle',
     })
 
-    .registerSetting(function () {
-      const value = this.setting('linkrobins-html-widget.body', '');
+    .registerSetting(
+      function () {
+        const value = this.setting('linkrobins-html-widget.body', '');
 
-      return m(
-        'div',
-        { className: 'Form-group' },
-        m('label', app.translator.trans('linkrobins-html-widget.admin.settings.body_label')),
-        m('textarea', {
-          className: 'FormControl',
-          rows: 14,
-          value: value(),
-          oninput: (e) => value(e.target.value),
-          placeholder: '<p>Hello, world!</p>',
-          style:
-            'font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem;',
-        }),
-        m(
-          'p',
-          { className: 'helpText' },
-          app.translator.trans('linkrobins-html-widget.admin.settings.body_help')
-        )
-      );
-    }, 0, 'linkrobins-html-widget.body');
+        return m(
+          'div',
+          { className: 'Form-group' },
+          m('label', app.translator.trans('linkrobins-html-widget.admin.settings.body_label')),
+          m('textarea', {
+            className: 'FormControl',
+            rows: 14,
+            value: value(),
+            oninput: (e) => value(e.target.value),
+            placeholder: '<p>Hello, world!</p>',
+            style: 'font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem;',
+          }),
+          m('p', { className: 'helpText' }, app.translator.trans('linkrobins-html-widget.admin.settings.body_help'))
+        );
+      },
+      0,
+      'linkrobins-html-widget.body'
+    );
 });
