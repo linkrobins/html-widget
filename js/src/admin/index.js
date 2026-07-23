@@ -1,4 +1,5 @@
 import app from 'flarum/admin/app';
+import ColorPreviewInput from 'flarum/common/components/ColorPreviewInput';
 import registerWidget from '../common/registerWidget';
 
 app.initializers.add('linkrobins-html-widget', () => {
@@ -23,6 +24,27 @@ app.initializers.add('linkrobins-html-widget', () => {
       help: app.translator.trans('linkrobins-html-widget.admin.settings.icon_help'),
       placeholder: 'fas fa-info-circle',
     })
+
+    .registerSetting(
+      function () {
+        const value = this.setting('linkrobins-html-widget.backgroundColor', '');
+
+        return m(
+          'div',
+          { className: 'Form-group' },
+          m('label', app.translator.trans('linkrobins-html-widget.admin.settings.background_label')),
+          m(ColorPreviewInput, {
+            value: value(),
+            oninput: (e) => value(e.target.value),
+            onchange: (e) => value(e.target.value),
+            placeholder: '#ffffff',
+          }),
+          m('p', { className: 'helpText' }, app.translator.trans('linkrobins-html-widget.admin.settings.background_help'))
+        );
+      },
+      5,
+      'linkrobins-html-widget.backgroundColor'
+    )
 
     .registerSetting(
       function () {

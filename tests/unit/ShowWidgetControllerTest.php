@@ -35,11 +35,12 @@ class ShowWidgetControllerTest extends MockeryTestCase
             'linkrobins-html-widget.title' => 'Welcome',
             'linkrobins-html-widget.icon' => 'fas fa-star',
             'linkrobins-html-widget.body' => '<p>Hello</p>',
+            'linkrobins-html-widget.backgroundColor' => '#ff8800',
         ])->handle(new ServerRequest());
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
-            ['title' => 'Welcome', 'icon' => 'fas fa-star', 'body' => '<p>Hello</p>'],
+            ['title' => 'Welcome', 'icon' => 'fas fa-star', 'body' => '<p>Hello</p>', 'backgroundColor' => '#ff8800'],
             json_decode((string) $response->getBody(), true)
         );
     }
@@ -50,7 +51,7 @@ class ShowWidgetControllerTest extends MockeryTestCase
         $response = $this->controller([])->handle(new ServerRequest());
 
         $this->assertEquals(
-            ['title' => '', 'icon' => '', 'body' => ''],
+            ['title' => '', 'icon' => '', 'body' => '', 'backgroundColor' => ''],
             json_decode((string) $response->getBody(), true)
         );
     }

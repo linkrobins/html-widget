@@ -1,5 +1,12 @@
 .LinkRobinsHtmlWidget {
     .FofWidgets-Widget-content {
+        // Optional admin background color; falls back to the theme's default
+        // widget background (fof's own value) when none is set. When a color is
+        // set, text switches to a contrasting shade (see makeHtmlWidget) so it
+        // stays readable on any theme; otherwise it follows the theme.
+        background: var(--lrhw-bg, var(--control-bg));
+        color: var(--lrhw-fg, inherit);
+
         // Scale the rendered HTML with linkrobins/font-sizer (no-op at default).
         font-size: calc(1em * var(--lr-text-scale, 1));
 
@@ -8,5 +15,11 @@
 
         img    { max-width: 100%; height: auto; }
         iframe { max-width: 100%; }
+    }
+
+    // fof's "flat" placement makes the content box transparent; keep that
+    // default when no color is chosen, but still honor an explicit one.
+    &.FofWidgets-Widget--flat .FofWidgets-Widget-content {
+        background: var(--lrhw-bg, transparent);
     }
 }

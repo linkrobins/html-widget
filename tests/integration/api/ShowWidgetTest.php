@@ -27,6 +27,7 @@ class ShowWidgetTest extends TestCase
         $this->setting('linkrobins-html-widget.title', 'Welcome');
         $this->setting('linkrobins-html-widget.icon', 'fas fa-star');
         $this->setting('linkrobins-html-widget.body', '<p>Hello</p>');
+        $this->setting('linkrobins-html-widget.backgroundColor', '#ff8800');
 
         $response = $this->send(
             $this->request('GET', '/api/linkrobins-html-widget')
@@ -34,7 +35,7 @@ class ShowWidgetTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
-            ['title' => 'Welcome', 'icon' => 'fas fa-star', 'body' => '<p>Hello</p>'],
+            ['title' => 'Welcome', 'icon' => 'fas fa-star', 'body' => '<p>Hello</p>', 'backgroundColor' => '#ff8800'],
             json_decode($response->getBody()->getContents(), true)
         );
         $this->assertEquals(
@@ -52,7 +53,7 @@ class ShowWidgetTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
-            ['title' => '', 'icon' => '', 'body' => ''],
+            ['title' => '', 'icon' => '', 'body' => '', 'backgroundColor' => ''],
             json_decode($response->getBody()->getContents(), true)
         );
     }
