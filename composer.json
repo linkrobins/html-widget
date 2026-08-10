@@ -2,6 +2,8 @@
     "name": "linkrobins/html-widget",
     "description": "HTML widget for fof/forum-widgets-core",
     "type": "flarum-extension",
+    "keywords": ["flarum", "widget", "html", "forum-widgets"],
+    "homepage": "https://linkrobins.com/extensions/html-widget",
     "license": "MIT",
     "authors": [
         {
