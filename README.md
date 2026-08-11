@@ -12,6 +12,29 @@ Adds one configurable HTML widget to the FoF Forum Widgets placement editor. Adm
 
 Drag and place it from the FoF Forum Widgets admin page like any other widget.
 
+## Settings
+
+Configured in **Admin → Extensions → Link Robins HTML Widget**, then placed from the FoF Forum Widgets page.
+
+| Setting | Required | What it does |
+|---|---|---|
+| Title | no | Shown above the body. Leave blank for a widget with no header. |
+| Icon class | no | A FontAwesome class rendered beside the title, e.g. `fas fa-bullhorn`. Leave blank for no icon. |
+| HTML body | yes | Raw HTML, sanitised before display (see the security note below). |
+| Background color | no | The widget's background. Leave blank to follow your theme, which is what keeps it looking native in both light and dark mode. |
+
+## How a change reaches readers
+
+The body is not baked into the forum's boot payload. It is fetched from its own endpoint on demand, and only a short hash of the current settings rides along in the payload.
+
+That hash is what makes an edit show up: changing any setting changes the hash, which changes the fetch URL, so a normal page reload picks up the new content. Readers do not need a hard refresh, and unchanged content still caches normally rather than being re-fetched on every page view.
+
+## What it does NOT do
+
+- One widget per forum, not a list of them. For several blocks of content, place several different widgets.
+- No per-tag or per-page targeting — placement is whatever FoF Forum Widgets gives it.
+- No Markdown. If you would rather write Markdown than HTML, use [`linkrobins/markdown-widget`](https://packagist.org/packages/linkrobins/markdown-widget) instead.
+
 ## Requirements
 
 - Flarum **2.0** or later
