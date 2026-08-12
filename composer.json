@@ -2,12 +2,21 @@
     "name": "linkrobins/html-widget",
     "description": "HTML widget for fof/forum-widgets-core",
     "type": "flarum-extension",
-    "keywords": ["flarum", "widget", "html", "forum-widgets"],
+    "keywords": [
+        "flarum",
+        "widget",
+        "html",
+        "forum-widgets"
+    ],
+    "support": {
+        "issues": "https://github.com/linkrobins/html-widget/issues",
+        "source": "https://github.com/linkrobins/html-widget"
+    },
     "homepage": "https://linkrobins.com/extensions/html-widget",
     "license": "MIT",
     "authors": [
         {
-            "name": "Karl Bullock",
+            "name": "Link Robins",
             "email": "karl@linkrobins.com"
         }
     ],
