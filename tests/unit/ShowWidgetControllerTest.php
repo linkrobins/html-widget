@@ -36,11 +36,18 @@ class ShowWidgetControllerTest extends MockeryTestCase
             'linkrobins-html-widget.icon' => 'fas fa-star',
             'linkrobins-html-widget.body' => '<p>Hello</p>',
             'linkrobins-html-widget.backgroundColor' => '#ff8800',
+            'linkrobins-html-widget.allowedIframeHosts' => "www.youtube.com\n*.vimeo.com",
         ])->handle(new ServerRequest());
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
-            ['title' => 'Welcome', 'icon' => 'fas fa-star', 'body' => '<p>Hello</p>', 'backgroundColor' => '#ff8800'],
+            [
+                'title' => 'Welcome',
+                'icon' => 'fas fa-star',
+                'body' => '<p>Hello</p>',
+                'backgroundColor' => '#ff8800',
+                'allowedIframeHosts' => "www.youtube.com\n*.vimeo.com",
+            ],
             json_decode((string) $response->getBody(), true)
         );
     }
@@ -51,7 +58,7 @@ class ShowWidgetControllerTest extends MockeryTestCase
         $response = $this->controller([])->handle(new ServerRequest());
 
         $this->assertEquals(
-            ['title' => '', 'icon' => '', 'body' => '', 'backgroundColor' => ''],
+            ['title' => '', 'icon' => '', 'body' => '', 'backgroundColor' => '', 'allowedIframeHosts' => ''],
             json_decode((string) $response->getBody(), true)
         );
     }

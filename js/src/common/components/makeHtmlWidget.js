@@ -1,5 +1,54 @@
 import DOMPurify from 'dompurify';
 
+// Attributes an embed needs to actually work once iframes are permitted.
+// `srcdoc` is deliberately absent: it carries its own HTML document, so an
+// iframe could smuggle arbitrary markup past the host allowlist with no `src`
+// for us to check.
+const IFRAME_ATTR = ['src', 'width', 'height', 'title', 'loading', 'referrerpolicy', 'allow', 'allowfullscreen', 'frameborder', 'sandbox'];
+
+/**
+ * Parse the admin's newline-separated host allowlist.
+ *
+ * Blank lines and `#` comments are ignored. An entry may be a bare host
+ * (`www.youtube.com`) or a subdomain wildcard (`*.youtube.com`), which matches
+ * any subdomain but not the bare domain itself.
+ */
+export function parseAllowedHosts(raw) {
+  return String(raw || '')
+    .split(/[\r\n,]+/)
+    .map((line) => line.trim().toLowerCase())
+    .filter((line) => line && !line.startsWith('#'))
+    .map((line) => line.replace(/^https?:\/\//, '').replace(/\/.*$/, ''))
+    .filter(Boolean);
+}
+
+/**
+ * Is this iframe `src` allowed?
+ *
+ * Only http(s) is accepted, so `javascript:` and `data:` URLs cannot slip
+ * through even if a browser would otherwise honour them in a frame.
+ */
+export function iframeSrcAllowed(src, allowedHosts) {
+  if (!allowedHosts.length) return false;
+
+  let url;
+  try {
+    url = new URL(String(src || ''), window.location.href);
+  } catch (e) {
+    return false;
+  }
+
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
+
+  const host = url.hostname.toLowerCase();
+
+  // For `*.example.com` the leading star is dropped and the remaining
+  // `.example.com` is matched as a suffix. Keeping the dot is what stops
+  // `evilexample.com` matching, and it also means the bare `example.com` does
+  // not match its own wildcard, so list both if you need both.
+  return allowedHosts.some((allowed) => (allowed.startsWith('*.') ? host.endsWith(allowed.slice(1)) : host === allowed));
+}
+
 // Pick a readable text color (near-black or white) for an admin-chosen
 // background. Once a solid background is set the card no longer follows the
 // theme, so its text must contrast with that fixed color rather than the
@@ -111,17 +160,62 @@ export default function makeHtmlWidget(Widget) {
     renderBody(body) {
       // Sanitising runs on every redraw, so memoise it: the body only changes
       // when an admin edits it, and re-parsing identical HTML each redraw is
-      // wasted work.
-      if (this._bodyCache !== body) {
+      // wasted work. The allowlist is part of the cache key because changing it
+      // changes the output for an unchanged body.
+      const hosts = this.data.allowedIframeHosts || '';
+      const key = hosts + '\u0000' + body;
+
+      if (this._bodyCache !== key) {
         try {
-          this._bodyHtml = DOMPurify.sanitize(body);
+          this._bodyHtml = sanitizeBody(body, parseAllowedHosts(hosts));
         } catch (e) {
           console.error('[linkrobins/html-widget] sanitise failed:', e);
           this._bodyHtml = '';
         }
-        this._bodyCache = body;
+        this._bodyCache = key;
       }
       return this._bodyHtml;
     }
   };
+}
+
+/**
+ * Sanitise the admin's HTML, optionally permitting iframes from named hosts.
+ *
+ * With no allowlist configured this is DOMPurify's default behaviour, which
+ * strips iframes along with scripts, event handlers and `javascript:` URLs.
+ *
+ * With an allowlist, iframes are permitted through DOMPurify and then checked
+ * individually: anything whose `src` host is not on the list is dropped. The
+ * check is a DOMPurify hook rather than a second pass over the output, so a
+ * rejected frame never reaches the returned markup. The hook is removed again
+ * immediately, because DOMPurify hooks are global to this bundle's instance and
+ * sanitising is synchronous, so leaving it registered would apply it to
+ * unrelated calls.
+ */
+export function sanitizeBody(body, allowedHosts) {
+  if (!allowedHosts.length) {
+    return DOMPurify.sanitize(body);
+  }
+
+  DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+    if (data.tagName !== 'iframe') return;
+
+    // getAttribute is guarded: DOMPurify passes text nodes through this hook
+    // too, and those have no attribute methods.
+    const src = typeof node.getAttribute === 'function' ? node.getAttribute('src') : null;
+
+    if (!iframeSrcAllowed(src, allowedHosts)) {
+      node.parentNode?.removeChild(node);
+    }
+  });
+
+  try {
+    return DOMPurify.sanitize(body, {
+      ADD_TAGS: ['iframe'],
+      ADD_ATTR: IFRAME_ATTR,
+    });
+  } finally {
+    DOMPurify.removeHook('uponSanitizeElement');
+  }
 }

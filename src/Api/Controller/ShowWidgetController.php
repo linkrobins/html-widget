@@ -32,6 +32,7 @@ class ShowWidgetController implements RequestHandlerInterface
             'icon'            => (string) $this->settings->get('linkrobins-html-widget.icon', ''),
             'body'            => (string) $this->settings->get('linkrobins-html-widget.body', ''),
             'backgroundColor' => (string) $this->settings->get('linkrobins-html-widget.backgroundColor', ''),
+            'allowedIframeHosts' => (string) $this->settings->get('linkrobins-html-widget.allowedIframeHosts', ''),
         ], 200, [
             'Cache-Control' => 'public, max-age=300, stale-while-revalidate=60',
         ]);

@@ -9,6 +9,7 @@ Adds one configurable HTML widget to the FoF Forum Widgets placement editor. Adm
 - **Title** — optional, shown above the body
 - **Icon** — FontAwesome class (e.g. `fas fa-bullhorn`)
 - **HTML body** — rendered as HTML, sanitised before display
+- **Allowed iframe hosts** — opt in to embeds from hosts you name
 
 Drag and place it from the FoF Forum Widgets admin page like any other widget.
 
@@ -21,6 +22,7 @@ Configured in **Admin → Extensions → Link Robins HTML Widget**, then placed 
 | Title | no | Shown above the body. Leave blank for a widget with no header. |
 | Icon class | no | A FontAwesome class rendered beside the title, e.g. `fas fa-bullhorn`. Leave blank for no icon. |
 | HTML body | yes | Raw HTML, sanitised before display (see the security note below). |
+| Allowed iframe hosts | no | One host per line. Iframes in the body survive only if their `src` is on this list. Blank removes every iframe. |
 | Background color | no | The widget's background. Leave blank to follow your theme, which is what keeps it looking native in both light and dark mode. |
 
 ## How a change reaches readers
@@ -51,9 +53,22 @@ php flarum cache:clear
 
 In Flarum admin → **Extensions**, find **Link Robins HTML Widget** under the **Forum Widgets** category and enable it. Configure title/icon/body, then go to FoF Forum Widgets settings and place it where you want it.
 
+## Embeds
+
+Iframes are removed by default. To keep an embed, list the host it loads from under **Allowed iframe hosts**, one per line:
+
+```
+www.youtube.com
+*.vimeo.com
+```
+
+A bare host matches exactly. A `*.` prefix matches any subdomain, so `*.vimeo.com` covers `player.vimeo.com` but not `vimeo.com` itself — list both if you need both. Only `http` and `https` embeds are ever kept, so a `javascript:` or `data:` frame is dropped whatever the list says, and `srcdoc` is never permitted because it carries its own HTML rather than a `src` to check.
+
 ## Security note
 
-The HTML body is passed through [DOMPurify](https://github.com/cure53/DOMPurify) before display, so `<script>` tags, event-handler attributes, `javascript:` URLs, and unsafe elements such as `<iframe>` are stripped. The body is still admin-only — treat it like any other admin-controlled content.
+The HTML body is passed through [DOMPurify](https://github.com/cure53/DOMPurify) before display, so `<script>` tags, event-handler attributes and `javascript:` URLs are stripped, along with any iframe whose host you have not allowed.
+
+Two things worth being clear about. The body is admin-only, so treat it like any other admin-controlled content. And the sanitising runs in the browser, which makes it a guard against pasting something you did not mean to rather than a security boundary — anyone able to edit this setting can already change the forum in bigger ways.
 
 ## License
 

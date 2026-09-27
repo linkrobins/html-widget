@@ -21,7 +21,8 @@ return [
                 $settings->get('linkrobins-html-widget.title', '') . '|' .
                 $settings->get('linkrobins-html-widget.icon', '') . '|' .
                 $settings->get('linkrobins-html-widget.body', '') . '|' .
-                $settings->get('linkrobins-html-widget.backgroundColor', '')
+                $settings->get('linkrobins-html-widget.backgroundColor', '') . '|' .
+                $settings->get('linkrobins-html-widget.allowedIframeHosts', '')
             ), 0, 12);
         }),
 
@@ -39,5 +40,6 @@ return [
         ->default('linkrobins-html-widget.title', '')
         ->default('linkrobins-html-widget.icon',  '')
         ->default('linkrobins-html-widget.body',  '')
-        ->default('linkrobins-html-widget.backgroundColor', ''),
+        ->default('linkrobins-html-widget.backgroundColor', '')
+        ->default('linkrobins-html-widget.allowedIframeHosts', ''),
 ];
