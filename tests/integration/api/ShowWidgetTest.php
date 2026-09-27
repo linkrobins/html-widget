@@ -28,6 +28,7 @@ class ShowWidgetTest extends TestCase
         $this->setting('linkrobins-html-widget.icon', 'fas fa-star');
         $this->setting('linkrobins-html-widget.body', '<p>Hello</p>');
         $this->setting('linkrobins-html-widget.backgroundColor', '#ff8800');
+        $this->setting('linkrobins-html-widget.allowedIframeHosts', "www.youtube.com\n*.vimeo.com");
 
         $response = $this->send(
             $this->request('GET', '/api/linkrobins-html-widget')
@@ -35,7 +36,13 @@ class ShowWidgetTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
-            ['title' => 'Welcome', 'icon' => 'fas fa-star', 'body' => '<p>Hello</p>', 'backgroundColor' => '#ff8800'],
+            [
+                'title' => 'Welcome',
+                'icon' => 'fas fa-star',
+                'body' => '<p>Hello</p>',
+                'backgroundColor' => '#ff8800',
+                'allowedIframeHosts' => "www.youtube.com\n*.vimeo.com",
+            ],
             json_decode($response->getBody()->getContents(), true)
         );
         $this->assertEquals(
@@ -53,7 +60,7 @@ class ShowWidgetTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
-            ['title' => '', 'icon' => '', 'body' => '', 'backgroundColor' => ''],
+            ['title' => '', 'icon' => '', 'body' => '', 'backgroundColor' => '', 'allowedIframeHosts' => ''],
             json_decode($response->getBody()->getContents(), true)
         );
     }
