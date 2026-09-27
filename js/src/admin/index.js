@@ -48,6 +48,29 @@ app.initializers.add('linkrobins-html-widget', () => {
 
     .registerSetting(
       function () {
+        const value = this.setting('linkrobins-html-widget.allowedIframeHosts', '');
+
+        return m(
+          'div',
+          { className: 'Form-group' },
+          m('label', app.translator.trans('linkrobins-html-widget.admin.settings.allowed_iframe_hosts_label')),
+          m('textarea', {
+            className: 'FormControl',
+            rows: 4,
+            value: value(),
+            oninput: (e) => value(e.target.value),
+            placeholder: 'www.youtube.com\n*.vimeo.com',
+            style: 'font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem;',
+          }),
+          m('p', { className: 'helpText' }, app.translator.trans('linkrobins-html-widget.admin.settings.allowed_iframe_hosts_help'))
+        );
+      },
+      -5,
+      'linkrobins-html-widget.allowedIframeHosts'
+    )
+
+    .registerSetting(
+      function () {
         const value = this.setting('linkrobins-html-widget.body', '');
 
         return m(
