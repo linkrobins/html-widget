@@ -32,7 +32,7 @@
     },
     "extra": {
         "flarum-extension": {
-            "title": "Link Robins HTML Widget",
+            "title": "LR HTML Widget",
             "category": "forum-widget",
             "icon": {
                 "name": "fas fa-code",
