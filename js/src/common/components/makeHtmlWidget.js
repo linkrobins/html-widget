@@ -63,6 +63,12 @@ function readableTextColor(hex) {
   return yiq >= 140 ? '#111111' : '#ffffff';
 }
 
+// Content already fetched in this page load, keyed by request URL (which
+// carries the settings revision), and requests still in flight. Both live for
+// the page's lifetime only, so a full reload always asks again.
+const contentCache = new Map();
+const pending = new Map();
+
 /**
  * Builds the HTML widget class.
  *
@@ -94,11 +100,35 @@ export default function makeHtmlWidget(Widget) {
       const base = app.forum.attribute('apiUrl') + '/linkrobins-html-widget';
       const url = rev ? base + '?v=' + encodeURIComponent(rev) : base;
 
-      app
-        .request({
-          method: 'GET',
+      // The widget area is rebuilt on every page change, which creates a new
+      // instance of this component. Reuse the content an earlier instance
+      // already loaded, so the widget appears in the same frame instead of
+      // vanishing until a request (even one the browser answers from cache)
+      // comes back, which shifted the page layout on every navigation.
+      if (contentCache.has(url)) {
+        this.data = contentCache.get(url);
+        this.loading = false;
+        return;
+      }
+
+      if (!pending.has(url)) {
+        pending.set(
           url,
-        })
+          app
+            .request({
+              method: 'GET',
+              url,
+            })
+            .then((data) => {
+              if (data) contentCache.set(url, data);
+              return data;
+            })
+            .finally(() => pending.delete(url))
+        );
+      }
+
+      pending
+        .get(url)
         .then((data) => {
           if (data) this.data = data;
           this.loading = false;
