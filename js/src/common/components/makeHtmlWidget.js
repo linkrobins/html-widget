@@ -156,14 +156,22 @@ export default function makeHtmlWidget(Widget) {
       const bg = this.data.backgroundColor || '';
       if (node && node.attrs && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(bg)) {
         const fg = readableTextColor(bg);
-        const decl = '--lrhw-bg: ' + bg + '; --lrhw-fg: ' + fg;
+        // Plain links follow the contrasting text color too, with an underline
+        // since they now share that color: the theme's link color is picked for
+        // the theme's own background and was hard to read on a dark admin color.
+        const vars = {
+          '--lrhw-bg': bg,
+          '--lrhw-fg': fg,
+          '--lrhw-link': fg,
+          '--lrhw-link-decoration': 'underline',
+        };
+        const decl = Object.keys(vars)
+          .map((key) => key + ': ' + vars[key])
+          .join('; ');
         const style = node.attrs.style;
         if (style == null) node.attrs.style = decl;
         else if (typeof style === 'string') node.attrs.style = style.replace(/;\s*$/, '') + '; ' + decl;
-        else {
-          style['--lrhw-bg'] = bg;
-          style['--lrhw-fg'] = fg;
-        }
+        else Object.assign(style, vars);
       }
 
       return node;

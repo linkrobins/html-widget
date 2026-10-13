@@ -13,6 +13,14 @@
         > *:first-child { margin-top: 0; }
         > *:last-child  { margin-bottom: 0; }
 
+        // With an admin background color, plain links take the contrasting text
+        // color and an underline (see makeHtmlWidget); otherwise the theme's.
+        // Buttons in the admin's HTML keep their own styling.
+        a:not(.Button) {
+            color: var(--lrhw-link, var(--link-color, var(--primary-color)));
+            text-decoration: var(--lrhw-link-decoration, none);
+        }
+
         img    { max-width: 100%; height: auto; }
         iframe { max-width: 100%; }
     }
