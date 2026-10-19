@@ -6,6 +6,13 @@ import DOMPurify from 'dompurify';
 // for us to check.
 const IFRAME_ATTR = ['src', 'width', 'height', 'title', 'loading', 'referrerpolicy', 'allow', 'allowfullscreen', 'frameborder', 'sandbox'];
 
+// Flarum sends `Referrer-Policy: same-origin`, so a cross-site frame gets no
+// Referer at all, and YouTube refuses to play an embed without one (its
+// "Error 153"). An allowed iframe with no policy of its own gets this one,
+// which sends the forum's origin (never the page path) to a host the admin
+// has listed. A policy the admin sets on the iframe is kept.
+const IFRAME_REFERRER_POLICY = 'strict-origin-when-cross-origin';
+
 /**
  * Parse the admin's newline-separated host allowlist.
  *
@@ -248,12 +255,13 @@ export default function makeHtmlWidget(Widget) {
  * strips iframes along with scripts, event handlers and `javascript:` URLs.
  *
  * With an allowlist, iframes are permitted through DOMPurify and then checked
- * individually: anything whose `src` host is not on the list is dropped. The
- * check is a DOMPurify hook rather than a second pass over the output, so a
- * rejected frame never reaches the returned markup. The hook is removed again
- * immediately, because DOMPurify hooks are global to this bundle's instance and
- * sanitising is synchronous, so leaving it registered would apply it to
- * unrelated calls.
+ * individually: anything whose `src` host is not on the list is dropped, and
+ * a frame that stays gets a referrer policy if it has none. Both are DOMPurify
+ * hooks rather than a second pass over the output, so a rejected frame never
+ * reaches the returned markup. The hooks are removed again immediately,
+ * because DOMPurify hooks are global to this bundle's instance and sanitising
+ * is synchronous, so leaving them registered would apply them to unrelated
+ * calls.
  */
 export function sanitizeBody(body, allowedHosts) {
   if (!allowedHosts.length) {
@@ -272,6 +280,12 @@ export function sanitizeBody(body, allowedHosts) {
     }
   });
 
+  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    if (node.nodeName === 'IFRAME' && !node.hasAttribute('referrerpolicy')) {
+      node.setAttribute('referrerpolicy', IFRAME_REFERRER_POLICY);
+    }
+  });
+
   try {
     return DOMPurify.sanitize(body, {
       ADD_TAGS: ['iframe'],
@@ -279,5 +293,6 @@ export function sanitizeBody(body, allowedHosts) {
     });
   } finally {
     DOMPurify.removeHook('uponSanitizeElement');
+    DOMPurify.removeHook('afterSanitizeAttributes');
   }
 }
