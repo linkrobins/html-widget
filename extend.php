@@ -19,6 +19,7 @@ return [
             $settings = resolve(SettingsRepositoryInterface::class);
             $document->payload['linkrobins-html-widget.rev'] = substr(sha1(
                 $settings->get('linkrobins-html-widget.title', '') . '|' .
+                $settings->get('linkrobins-html-widget.description', '') . '|' .
                 $settings->get('linkrobins-html-widget.icon', '') . '|' .
                 $settings->get('linkrobins-html-widget.body', '') . '|' .
                 $settings->get('linkrobins-html-widget.backgroundColor', '') . '|' .
@@ -38,6 +39,7 @@ return [
 
     (new Extend\Settings())
         ->default('linkrobins-html-widget.title', '')
+        ->default('linkrobins-html-widget.description', '')
         ->default('linkrobins-html-widget.icon',  '')
         ->default('linkrobins-html-widget.body',  '')
         ->default('linkrobins-html-widget.backgroundColor', '')

@@ -29,6 +29,7 @@ class ShowWidgetController implements RequestHandlerInterface
     {
         return new JsonResponse([
             'title'           => (string) $this->settings->get('linkrobins-html-widget.title', ''),
+            'description'     => (string) $this->settings->get('linkrobins-html-widget.description', ''),
             'icon'            => (string) $this->settings->get('linkrobins-html-widget.icon', ''),
             'body'            => (string) $this->settings->get('linkrobins-html-widget.body', ''),
             'backgroundColor' => (string) $this->settings->get('linkrobins-html-widget.backgroundColor', ''),

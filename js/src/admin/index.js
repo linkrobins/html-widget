@@ -18,6 +18,14 @@ app.initializers.add('linkrobins-html-widget', () => {
     })
 
     .registerSetting({
+      setting: 'linkrobins-html-widget.description',
+      type: 'text',
+      label: app.translator.trans('linkrobins-html-widget.admin.settings.description_label'),
+      help: app.translator.trans('linkrobins-html-widget.admin.settings.description_help'),
+      placeholder: app.translator.trans('linkrobins-html-widget.admin.settings.description_placeholder'),
+    })
+
+    .registerSetting({
       setting: 'linkrobins-html-widget.icon',
       type: 'text',
       label: app.translator.trans('linkrobins-html-widget.admin.settings.icon_label'),

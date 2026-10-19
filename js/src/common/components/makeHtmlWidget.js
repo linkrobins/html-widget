@@ -97,7 +97,7 @@ export default function makeHtmlWidget(Widget) {
       super.oninit(vnode);
 
       this.loading = true;
-      this.data = { title: '', icon: '', body: '', backgroundColor: '' };
+      this.data = { title: '', description: '', icon: '', body: '', backgroundColor: '' };
 
       // Cache-bust with the settings revision from the boot payload: when an
       // admin edits the widget the hash changes, so the URL changes and a normal
@@ -194,6 +194,30 @@ export default function makeHtmlWidget(Widget) {
 
     title() {
       return this.data.title || '';
+    }
+
+    description() {
+      return this.data.description || '';
+    }
+
+    // The base header() renders icon, title and description together, but only
+    // when title() is set. Keep it as the primary path so that markup stays
+    // fof's own, and hand-build the no-title case so a description (with the
+    // icon, if one is set) still gets a header instead of rendering nothing.
+    header() {
+      const base = super.header();
+      if (base) return base;
+
+      const iconName = this.icon();
+      const description = this.description();
+      if (!description) return null;
+
+      return m(
+        'div',
+        { className: 'FofWidgets-Widget-title' },
+        iconName ? m('span', { className: 'FofWidgets-Widget-title-icon' }, m('i', { className: iconName })) : null,
+        m('div', { className: 'FofWidgets-Widget-title-desc' }, description)
+      );
     }
 
     content() {
