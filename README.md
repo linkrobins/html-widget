@@ -7,6 +7,7 @@ A simple HTML widget for [Flarum 2.0](https://flarum.org), built as a widget for
 Adds one configurable HTML widget to the FoF Forum Widgets placement editor. Admin sets:
 
 - **Title** — optional, shown above the body
+- **Description**: optional small text under the title
 - **Icon** — FontAwesome class (e.g. `fas fa-bullhorn`)
 - **HTML body** — rendered as HTML, sanitised before display
 - **Allowed iframe hosts** — opt in to embeds from hosts you name
@@ -20,6 +21,7 @@ Configured in **Admin → Extensions → Link Robins HTML Widget**, then placed 
 | Setting | Required | What it does |
 |---|---|---|
 | Title | no | Shown above the body. Leave blank for a widget with no header. |
+| Description | no | Small text under the title, in the same style as other FoF widgets' descriptions. |
 | Icon class | no | A FontAwesome class rendered beside the title, e.g. `fas fa-bullhorn`. Leave blank for no icon. |
 | HTML body | yes | Raw HTML, sanitised before display (see the security note below). |
 | Allowed iframe hosts | no | One host per line. Iframes in the body survive only if their `src` is on this list. Blank removes every iframe. |
