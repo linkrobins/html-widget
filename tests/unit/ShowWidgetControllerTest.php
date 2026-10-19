@@ -33,6 +33,7 @@ class ShowWidgetControllerTest extends MockeryTestCase
     {
         $response = $this->controller([
             'linkrobins-html-widget.title' => 'Welcome',
+            'linkrobins-html-widget.description' => 'Read first',
             'linkrobins-html-widget.icon' => 'fas fa-star',
             'linkrobins-html-widget.body' => '<p>Hello</p>',
             'linkrobins-html-widget.backgroundColor' => '#ff8800',
@@ -43,6 +44,7 @@ class ShowWidgetControllerTest extends MockeryTestCase
         $this->assertEquals(
             [
                 'title' => 'Welcome',
+                'description' => 'Read first',
                 'icon' => 'fas fa-star',
                 'body' => '<p>Hello</p>',
                 'backgroundColor' => '#ff8800',
@@ -58,7 +60,7 @@ class ShowWidgetControllerTest extends MockeryTestCase
         $response = $this->controller([])->handle(new ServerRequest());
 
         $this->assertEquals(
-            ['title' => '', 'icon' => '', 'body' => '', 'backgroundColor' => '', 'allowedIframeHosts' => ''],
+            ['title' => '', 'description' => '', 'icon' => '', 'body' => '', 'backgroundColor' => '', 'allowedIframeHosts' => ''],
             json_decode((string) $response->getBody(), true)
         );
     }

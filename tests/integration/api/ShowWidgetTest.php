@@ -25,6 +25,7 @@ class ShowWidgetTest extends TestCase
     public function guests_get_the_configured_content(): void
     {
         $this->setting('linkrobins-html-widget.title', 'Welcome');
+        $this->setting('linkrobins-html-widget.description', 'Read first');
         $this->setting('linkrobins-html-widget.icon', 'fas fa-star');
         $this->setting('linkrobins-html-widget.body', '<p>Hello</p>');
         $this->setting('linkrobins-html-widget.backgroundColor', '#ff8800');
@@ -38,6 +39,7 @@ class ShowWidgetTest extends TestCase
         $this->assertEquals(
             [
                 'title' => 'Welcome',
+                'description' => 'Read first',
                 'icon' => 'fas fa-star',
                 'body' => '<p>Hello</p>',
                 'backgroundColor' => '#ff8800',
@@ -60,7 +62,7 @@ class ShowWidgetTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
-            ['title' => '', 'icon' => '', 'body' => '', 'backgroundColor' => '', 'allowedIframeHosts' => ''],
+            ['title' => '', 'description' => '', 'icon' => '', 'body' => '', 'backgroundColor' => '', 'allowedIframeHosts' => ''],
             json_decode($response->getBody()->getContents(), true)
         );
     }
