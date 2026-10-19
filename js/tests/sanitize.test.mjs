@@ -61,10 +61,22 @@ test('only http and https frames are allowed, whatever the host', () => {
   assert.equal(iframeSrcAllowed('https://www.youtube.com/', []), false);
 });
 
+// An allowed frame with no referrer policy of its own gets this one.
+const withPolicy = (frame) => frame.replace('></iframe>', ' referrerpolicy="strict-origin-when-cross-origin"></iframe>');
+
 test('an allowed iframe is kept and an unlisted one is dropped', () => {
   const out = sanitizeBody(youtube + '<iframe src="https://evil.test/"></iframe><p>after</p>', ['www.youtube.com']);
 
-  assert.equal(out, youtube + '<p>after</p>');
+  assert.equal(out, withPolicy(youtube) + '<p>after</p>');
+});
+
+test('an allowed iframe gets a referrer policy, unless it sets its own', () => {
+  // Flarum's same-origin page policy would otherwise send no Referer, which
+  // YouTube rejects with "Error 153".
+  assert.equal(sanitizeBody(youtube, ['www.youtube.com']), withPolicy(youtube));
+
+  const own = '<iframe src="https://www.youtube.com/embed/abc" referrerpolicy="no-referrer"></iframe>';
+  assert.equal(sanitizeBody(own, ['www.youtube.com']), own);
 });
 
 test('srcdoc and event handlers are stripped from an allowed iframe', () => {
@@ -72,7 +84,7 @@ test('srcdoc and event handlers are stripped from an allowed iframe', () => {
   // so only a markup-free value shows whether the allowlist permits srcdoc.
   const out = sanitizeBody('<iframe src="https://www.youtube.com/embed/abc" srcdoc="hello" onload="x()"></iframe>', ['www.youtube.com']);
 
-  assert.equal(out, '<iframe src="https://www.youtube.com/embed/abc"></iframe>');
+  assert.equal(out, withPolicy('<iframe src="https://www.youtube.com/embed/abc"></iframe>'));
 });
 
 test('the iframe hook does not leak into later calls', () => {
@@ -83,5 +95,5 @@ test('the iframe hook does not leak into later calls', () => {
   assert.equal(sanitizeBody(youtube + '<p>x</p>', []), '<p>x</p>');
   // A hook left behind by the first call would drop this frame, because its
   // host is not on the first call's list.
-  assert.equal(sanitizeBody(vimeo, ['player.vimeo.com']), vimeo);
+  assert.equal(sanitizeBody(vimeo, ['player.vimeo.com']), withPolicy(vimeo));
 });
