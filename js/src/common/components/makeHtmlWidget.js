@@ -150,8 +150,9 @@ export default function makeHtmlWidget(Widget) {
 
     view(vnode) {
       // Don't render the widget shell until the content has loaded, to avoid a
-      // flash of an empty widget while the request is in flight.
-      if (this.loading) return null;
+      // flash of an empty widget while the request is in flight. `hidden` means
+      // this visitor can't view the forum (a private forum), so show nothing.
+      if (this.loading || this.data.hidden) return null;
 
       const node = super.view(vnode);
 
