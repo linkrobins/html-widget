@@ -33,6 +33,10 @@ The body is not baked into the forum's boot payload. It is fetched from its own 
 
 That hash is what makes an edit show up: changing any setting changes the hash, which changes the fetch URL, so a normal page reload picks up the new content. Readers do not need a hard refresh, and unchanged content still caches normally rather than being re-fetched on every page view.
 
+## Private forums
+
+If guests can't view your forum, they don't get the widget's content either: it is only sent to visitors who can view the forum, the same as your discussions.
+
 ## What it does NOT do
 
 - One widget per forum, not a list of them. For several blocks of content, place several different widgets.
