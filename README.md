@@ -1,6 +1,6 @@
 # Link Robins HTML Widget
 
-A simple HTML widget for [Flarum 2.0](https://flarum.org), built as a widget for [`fof/forum-widgets-core`](https://packagist.org/packages/fof/forum-widgets-core). Same skeleton as [`linkrobins/shoutbox`](https://packagist.org/packages/linkrobins/shoutbox).
+A simple HTML widget for [Flarum 2.0](https://flarum.org), built as a widget for [`fof/forum-widgets-core`](https://packagist.org/packages/fof/forum-widgets-core).
 
 ## What it does
 
@@ -9,21 +9,21 @@ Adds one configurable HTML widget to the FoF Forum Widgets placement editor. Adm
 - **Title** — optional, shown above the body
 - **Description**: optional small text under the title
 - **Icon** — FontAwesome class (e.g. `fas fa-bullhorn`)
-- **HTML body** — rendered as HTML, sanitised before display
+- **HTML body** — rendered as HTML, sanitized before display
 - **Allowed iframe hosts** — opt in to embeds from hosts you name
 
 Drag and place it from the FoF Forum Widgets admin page like any other widget.
 
 ## Settings
 
-Configured in **Admin → Extensions → Link Robins HTML Widget**, then placed from the FoF Forum Widgets page.
+Configured in **Admin → Extensions → LR HTML Widget**, then placed from the FoF Forum Widgets page.
 
 | Setting | Required | What it does |
 |---|---|---|
 | Title | no | Shown above the body. Leave blank for a widget with no header. |
 | Description | no | Small text under the title, in the same style as other FoF widgets' descriptions. |
 | Icon class | no | A FontAwesome class rendered beside the title, e.g. `fas fa-bullhorn`. Leave blank for no icon. |
-| HTML body | yes | Raw HTML, sanitised before display (see the security note below). |
+| HTML body | yes | Raw HTML, sanitized before display (see the security note below). |
 | Allowed iframe hosts | no | One host per line. Iframes in the body survive only if their `src` is on this list. Blank removes every iframe. |
 | Background color | no | The widget's background. Leave blank to follow your theme, which is what keeps it looking native in both light and dark mode. |
 
@@ -31,11 +31,11 @@ Configured in **Admin → Extensions → Link Robins HTML Widget**, then placed 
 
 The body is not baked into the forum's boot payload. It is fetched from its own endpoint on demand, and only a short hash of the current settings rides along in the payload.
 
-That hash is what makes an edit show up: changing any setting changes the hash, which changes the fetch URL, so a normal page reload picks up the new content. Readers do not need a hard refresh, and unchanged content still caches normally rather than being re-fetched on every page view.
+That hash is what makes an edit show up: changing any setting changes the hash, which changes the fetch URL, so a normal page reload picks up the new content. Readers do not need a hard refresh, and unchanged content is cached for a few minutes rather than being re-fetched on every page view.
 
 ## Private forums
 
-If guests can't view your forum, they don't get the widget's content either: it is only sent to visitors who can view the forum, the same as your discussions.
+If guests can't view your forum, they don't get the widget's content either: it is only sent to visitors who can view the forum, the same as your discussions. There are no permissions of its own to set.
 
 ## What it does NOT do
 
@@ -48,16 +48,17 @@ If guests can't view your forum, they don't get the widget's content either: it 
 - Flarum **2.0** or later
 - [`fof/forum-widgets-core`](https://packagist.org/packages/fof/forum-widgets-core) installed and enabled
 
-The HTML sanitiser ([DOMPurify](https://github.com/cure53/DOMPurify)) is bundled into the extension — nothing is fetched from a CDN at runtime.
+The HTML sanitizer ([DOMPurify](https://github.com/cure53/DOMPurify)) is bundled into the extension — nothing is fetched from a CDN at runtime.
 
 ## Installation
 
-```
+```sh
 composer require linkrobins/html-widget
-php flarum cache:clear
 ```
 
-In Flarum admin → **Extensions**, find **Link Robins HTML Widget** under the **Forum Widgets** category and enable it. Configure title/icon/body, then go to FoF Forum Widgets settings and place it where you want it.
+In the admin panel's **Extensions** page, find **LR HTML Widget** under the **Forum Widgets** category and switch it on. Configure title/icon/body, then go to FoF Forum Widgets settings and place it where you want it.
+
+To update later: `composer update linkrobins/html-widget`, then `php flarum cache:clear`.
 
 ## Embeds
 
@@ -74,7 +75,7 @@ A bare host matches exactly. A `*.` prefix matches any subdomain, so `*.vimeo.co
 
 The HTML body is passed through [DOMPurify](https://github.com/cure53/DOMPurify) before display, so `<script>` tags, event-handler attributes and `javascript:` URLs are stripped, along with any iframe whose host you have not allowed.
 
-Two things worth being clear about. The body is admin-only, so treat it like any other admin-controlled content. And the sanitising runs in the browser, which makes it a guard against pasting something you did not mean to rather than a security boundary — anyone able to edit this setting can already change the forum in bigger ways.
+Two things worth being clear about. The body is admin-only, so treat it like any other admin-controlled content. And the sanitizing runs in the browser, which makes it a guard against pasting something you did not mean to rather than a security boundary — anyone able to edit this setting can already change the forum in bigger ways.
 
 ## License
 
